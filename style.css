@@ -1,0 +1,23 @@
+body {
+  margin: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: rgb(174, 210, 219);
+}
+
+#option {
+  width: 100%;
+  height: 50px;
+  background: white;
+}
+
+#app {
+  margin: auto;
+  border: 1px solid black;
+  width: 80%;
+  height: 80vh;
+  background: white;
+  cursor: url(./images/pencil32.png) 0 32, auto;
+}
