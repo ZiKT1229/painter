@@ -12,17 +12,21 @@ body {
   height: 50px;
   background: white;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
 }
 
 .option-btn {
   height: 100%;
-  width: 100px;
+  padding: 0 10px;
   text-align: center;
   line-height: 50px;
   font-size: 24px;
   background: palegreen;
   cursor: pointer;
+}
+
+.option-btn:hover {
+  background: rgb(110, 255, 110);
 }
 
 #app {
