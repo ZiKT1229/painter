@@ -27,6 +27,10 @@ class Painter {
       this.mode = 2;
       this.vertex = [];
     });
+    document.getElementsByClassName('option-btn')[3].addEventListener('click', () => {
+      this.mode = 3;
+      this.vertex = [];
+    });
     this.action = false;
     this.pointerdownEvent = this.pointerdownEvent.bind(this);
     this.pointermoveEvent = this.pointermoveEvent.bind(this);
@@ -52,7 +56,7 @@ class Painter {
       } else {
         this.drawRect();
       }
-    }else if (this.mode === 2) {
+    } else if (this.mode === 2) {
       if (this.vertex.length < 2) {
         this.vertex.push({
           x: this.orignX,
@@ -60,6 +64,15 @@ class Painter {
         });
       } else {
         this.drawTri();
+      }
+    } else if (this.mode === 3) {
+      if (this.vertex.length < 1) {
+        this.vertex.push({
+          x: this.orignX,
+          y: this.orignY
+        });
+      } else {
+        this.drawLine();
       }
     }
   }
@@ -81,7 +94,11 @@ class Painter {
   }
 
   drawLine() {
-
+    this.context.beginPath();
+    this.context.moveTo(this.vertex[0].x, this.vertex[0].y);
+    this.vertex.shift();
+    this.context.lineTo(this.orignX, this.orignY);
+    this.context.stroke();
   }
 
   drawTri() {
