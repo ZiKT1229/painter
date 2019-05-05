@@ -10,6 +10,7 @@ class Painter {
     this.pointerY = null;
     this.color = '#000000';
     this.context.fillStyle = this.color;
+    this.context.lineWidth = 5;
     this.size = '';
     this.mode = 0;
     this.vertex = [];
