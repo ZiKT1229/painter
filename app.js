@@ -9,11 +9,13 @@ class Painter {
     this.pointerX = null;
     this.pointerY = null;
     this.color = '#000000';
+    this.context.strokeStyle = this.color;
     this.context.fillStyle = this.color;
-    this.context.lineWidth = 5;
+    this.context.lineWidth = 1;
     this.size = '';
     this.mode = 0;
     this.vertex = [];
+    this.history = [];
 
     document.getElementsByClassName('option-btn')[0].addEventListener('click', () => {
       this.mode = 0;
@@ -41,6 +43,16 @@ class Painter {
     this.canvas.addEventListener('pointerup', this.pointerupEvent);
   }
 
+  updateHistory() {
+    const imageData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+    this.history.push(imageData);
+  }
+
+  backHistory() {
+    const reloadData = this.history[this.history.length - 1];
+    this.context.putImageData(reloadData, 0, 0);
+  }
+
   pointerdownEvent(event) {
     this.action = true;
     this.orignX = Math.floor(event.offsetX);
@@ -49,13 +61,12 @@ class Painter {
     this.pointerY = Math.floor(event.offsetY);
     this.drawDot();
     if (this.mode === 1) {
+      this.updateHistory();
       if (this.vertex.length < 1) {
         this.vertex.push({
           x: this.orignX,
           y: this.orignY
         });
-      } else {
-        this.drawRect();
       }
     } else if (this.mode === 2) {
       if (this.vertex.length < 2) {
@@ -80,11 +91,22 @@ class Painter {
 
   pointermoveEvent() {
     if (!this.action) return;
+    if (this.mode === 1) {
+      this.backHistory();
+      this.pointerX = Math.floor(event.offsetX);
+      this.pointerY = Math.floor(event.offsetY);
+      this.context.strokeStyle = this.color;
+      this.context.strokeRect(this.orignX, this.orignY, this.pointerX - this.orignX, this.pointerY - this.orignY);
+    }
   }
 
   pointerupEvent() {
     this.pointerX = Math.floor(event.offsetX);
     this.pointerY = Math.floor(event.offsetY);
+    if (this.mode === 1) {
+      this.backHistory();
+      this.drawRect();
+    }
     this.action = false;
   }
 
