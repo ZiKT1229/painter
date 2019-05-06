@@ -16,6 +16,7 @@ class Painter {
     this.mode = 0;
     this.vertex = [];
     this.history = [];
+    this.updateHistory();
 
     document.getElementsByClassName('option-btn')[0].addEventListener('click', () => {
       this.mode = 0;
@@ -48,27 +49,25 @@ class Painter {
     this.history.push(imageData);
   }
 
-  backHistory() {
+  currHistory() {
     const reloadData = this.history[this.history.length - 1];
     this.context.putImageData(reloadData, 0, 0);
   }
 
+  backHistory() {
+    const reloadData = this.history.pop();
+    this.context.putImageData(reloadData, 0, 0);
+  }
+
   pointerdownEvent(event) {
+    if (!this.mode) return;
     this.action = true;
     this.orignX = Math.floor(event.offsetX);
     this.orignY = Math.floor(event.offsetY);
     this.pointerX = Math.floor(event.offsetX);
     this.pointerY = Math.floor(event.offsetY);
     this.drawDot();
-    if (this.mode === 1) {
-      this.updateHistory();
-      if (this.vertex.length < 1) {
-        this.vertex.push({
-          x: this.orignX,
-          y: this.orignY
-        });
-      }
-    } else if (this.mode === 2) {
+    if (this.mode === 2) {
       if (this.vertex.length < 2) {
         this.vertex.push({
           x: this.orignX,
@@ -76,51 +75,51 @@ class Painter {
         });
       } else {
         this.drawTri();
-      }
-    } else if (this.mode === 3) {
-      if (this.vertex.length < 1) {
-        this.vertex.push({
-          x: this.orignX,
-          y: this.orignY
-        });
-      } else {
-        this.drawLine();
+        this.updateHistory();
       }
     }
   }
 
   pointermoveEvent() {
     if (!this.action) return;
+    this.pointerX = Math.floor(event.offsetX);
+    this.pointerY = Math.floor(event.offsetY);
     if (this.mode === 1) {
-      this.backHistory();
-      this.pointerX = Math.floor(event.offsetX);
-      this.pointerY = Math.floor(event.offsetY);
-      this.context.strokeStyle = this.color;
+      this.currHistory();
       this.context.strokeRect(this.orignX, this.orignY, this.pointerX - this.orignX, this.pointerY - this.orignY);
+    } else if (this.mode === 3) {
+      this.currHistory();
+      this.drawLine();
     }
   }
 
   pointerupEvent() {
+    if (!this.action) return;
     this.pointerX = Math.floor(event.offsetX);
     this.pointerY = Math.floor(event.offsetY);
     if (this.mode === 1) {
-      this.backHistory();
+      this.currHistory();
       this.drawRect();
+      this.updateHistory();
+    } else if (this.mode === 3) {
+      this.currHistory();
+      this.drawLine();
+      this.updateHistory();
     }
     this.action = false;
   }
 
   drawDot() {
     this.context.beginPath();
-    this.context.arc(this.orignX, this.orignY, 5, 0, 2 * Math.PI, true);
+    this.context.arc(this.orignX, this.orignY, 1, 0, 2 * Math.PI, true);
     this.context.fill();
   }
 
   drawLine() {
     this.context.beginPath();
-    this.context.moveTo(this.vertex[0].x, this.vertex[0].y);
+    this.context.moveTo(this.orignX, this.orignY);
     this.vertex.shift();
-    this.context.lineTo(this.orignX, this.orignY);
+    this.context.lineTo(this.pointerX, this.pointerY);
     this.context.stroke();
   }
 
@@ -135,7 +134,7 @@ class Painter {
   }
 
   drawRect() {
-    this.context.fillRect(this.vertex[0].x, this.vertex[0].y, this.pointerX - this.vertex[0].x, this.pointerY - this.vertex[0].y);
+    this.context.fillRect(this.orignX, this.orignY, this.pointerX - this.orignX, this.pointerY - this.orignY);
     this.vertex.shift();
   }
 
