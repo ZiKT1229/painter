@@ -21,7 +21,9 @@ class Painter {
     document.getElementsByClassName('option-btn')[0].addEventListener('click', () => {
       this.mode = 0;
       this.vertex = [];
+      this.history = [];
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.updateHistory();
     });
     document.getElementsByClassName('option-btn')[1].addEventListener('click', () => {
       this.mode = 1;
